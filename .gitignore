@@ -1,0 +1,17 @@
+data/
+results/
+figures/
+
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+.venv
+.python-version

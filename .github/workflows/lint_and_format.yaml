@@ -1,0 +1,42 @@
+name: Lint and Format
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ckecks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.0
+
+      - name: Install dependencies
+        run: uv sync --python 3.13 --locked --extra experiments --group check
+
+      - name: Run Ruff (lint)
+        run: uv run ruff check --output-format=github .
+
+      - name: Check formatting
+        if: github.event_name == 'pull_request'
+        run: uv run ruff format --check .
+
+      - name: Run Ruff (format)
+        if: github.event_name == 'push'
+        run: uv run ruff format .
+
+      - name: Commit changes
+        if: github.event_name == 'push'
+        uses: stefanzweifel/git-auto-commit-action@v7.2.0
+        with:
+          commit_message: Apply automatic code formatting
